@@ -23,6 +23,12 @@ export default function Index() {
       setPaisNome(null);
 
       const resposta = await fetch(`https://restcountries.com/v3.1/name/${nome}`);
+
+       if (!resposta.ok) {
+      setErro("País não encontrado.");
+      return;
+    }
+
       const dados = await resposta.json();
 
       setPaisNome(dados[0]);
@@ -39,6 +45,11 @@ export default function Index() {
       const resposta = await fetch(
         `https://restcountries.com/v3.1/capital/${capital}`
       );
+
+      if (!resposta.ok) {
+      setErro("Capital não encontrada.");
+      return;
+    }
 
       const dados = await resposta.json();
       setPaisCapital(dados[0]);
