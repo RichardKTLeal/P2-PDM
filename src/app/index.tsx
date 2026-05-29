@@ -1,9 +1,20 @@
 import { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Linking } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Linking,
+} from "react-native";
 
 export default function Index() {
   const [nome, setNome] = useState("");
+  const [capital, setCapital] = useState("");
   const [paisNome, setPaisNome] = useState<any>(null);
+  const [paisCapital, setPaisCapital] = useState<any>(null);
   const [erro, setErro] = useState("");
 
   async function buscarPorNome() {
@@ -17,6 +28,22 @@ export default function Index() {
       setPaisNome(dados[0]);
     } catch {
       setErro("Erro ao buscar país.");
+    }
+  }
+
+  async function buscarPorCapital() {
+    try {
+      setErro("");
+      setPaisCapital(null);
+
+      const resposta = await fetch(
+        `https://restcountries.com/v3.1/capital/${capital}`
+      );
+
+      const dados = await resposta.json();
+      setPaisCapital(dados[0]);
+    } catch {
+      setErro("Erro ao buscar capital.");
     }
   }
 
@@ -52,6 +79,30 @@ export default function Index() {
         )}
       </View>
 
+      <View style={styles.card}>
+        <Text style={styles.subtitulo}>Buscar por capital</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Ex: Brasília"
+          value={capital}
+          onChangeText={setCapital}
+        />
+
+        <Button title="Buscar capital" onPress={buscarPorCapital} />
+
+        {paisCapital && (
+          <View style={styles.resultado}>
+            <Text>Nome oficial: {paisCapital.name.official}</Text>
+
+            <Image
+              source={{ uri: paisCapital.flags.png }}
+              style={styles.bandeira}
+            />
+          </View>
+        )}
+      </View>
+
       {erro !== "" && <Text style={styles.erro}>{erro}</Text>}
     </ScrollView>
   );
@@ -71,6 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   resultado: { marginTop: 15, gap: 8 },
+  bandeira: { width: 180, height: 110, marginTop: 10, resizeMode: "contain" },
   link: { color: "blue", marginTop: 10, textDecorationLine: "underline" },
   erro: { color: "red", textAlign: "center", fontWeight: "bold" },
 });
