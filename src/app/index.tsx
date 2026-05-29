@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Linking } from "react-native";
 
 export default function Index() {
   const [nome, setNome] = useState("");
@@ -41,6 +41,13 @@ export default function Index() {
             <Text>Nome comum: {paisNome.name.common}</Text>
             <Text>Nome oficial: {paisNome.name.official}</Text>
             <Text>Nome em russo: {paisNome.translations?.rus?.common}</Text>
+
+            <Text
+              style={styles.link}
+              onPress={() => Linking.openURL(paisNome.maps.openStreetMaps)}
+            >
+              Abrir no OpenStreetMap
+            </Text>
           </View>
         )}
       </View>
@@ -64,5 +71,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   resultado: { marginTop: 15, gap: 8 },
+  link: { color: "blue", marginTop: 10, textDecorationLine: "underline" },
   erro: { color: "red", textAlign: "center", fontWeight: "bold" },
 });
