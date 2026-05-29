@@ -3,6 +3,22 @@ import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-nat
 
 export default function Index() {
   const [nome, setNome] = useState("");
+  const [paisNome, setPaisNome] = useState<any>(null);
+  const [erro, setErro] = useState("");
+
+  async function buscarPorNome() {
+    try {
+      setErro("");
+      setPaisNome(null);
+
+      const resposta = await fetch(`https://restcountries.com/v3.1/name/${nome}`);
+      const dados = await resposta.json();
+
+      setPaisNome(dados[0]);
+    } catch {
+      setErro("Erro ao buscar país.");
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -18,8 +34,18 @@ export default function Index() {
           onChangeText={setNome}
         />
 
-        <Button title="Buscar país" onPress={() => {}} />
+        <Button title="Buscar país" onPress={buscarPorNome} />
+
+        {paisNome && (
+          <View style={styles.resultado}>
+            <Text>Nome comum: {paisNome.name.common}</Text>
+            <Text>Nome oficial: {paisNome.name.official}</Text>
+            <Text>Nome em russo: {paisNome.translations?.rus?.common}</Text>
+          </View>
+        )}
       </View>
+
+      {erro !== "" && <Text style={styles.erro}>{erro}</Text>}
     </ScrollView>
   );
 }
@@ -37,4 +63,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: "#fff",
   },
+  resultado: { marginTop: 15, gap: 8 },
+  erro: { color: "red", textAlign: "center", fontWeight: "bold" },
 });
